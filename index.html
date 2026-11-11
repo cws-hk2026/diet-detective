@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176b49">
+  <title>我的一日飲食偵探：24小時飲食體檢</title>
+  <style>
+    :root{--green:#176b49;--green2:#e5f5ec;--ink:#17352b;--muted:#60766d;--line:#d6e5dc;--bg:#f3f8f5;--card:#fff;--orange:#e87528;--red:#b53b35;--shadow:0 8px 24px #17352b18}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,"Microsoft JhengHei","PingFang TC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+    button,input,select,textarea{font:inherit}button{cursor:pointer}.wrap{max-width:1100px;margin:auto;padding:16px}.hero{background:linear-gradient(135deg,#125d40,#2c9a68);color:#fff;border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+    .hero h1{margin:0 0 6px;font-size:clamp(1.55rem,4vw,2.5rem)}.hero p{margin:0;opacity:.94}.progress{height:10px;background:#ffffff48;border-radius:99px;overflow:hidden;margin-top:18px}.progress>span{display:block;height:100%;width:0;background:#ffe27a;transition:.25s}.progress-text{font-size:.88rem;margin-top:6px}
+    .notice{background:#fff7d7;border-left:5px solid #e8ad24;padding:12px 14px;border-radius:12px;margin:14px 0}.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:var(--shadow)}.card h2{font-size:1.15rem;margin:0 0 12px}.wide{grid-column:1/-1}
+    label,.label{display:block;font-weight:750;margin:10px 0 5px}.hint{color:var(--muted);font-size:.84rem}.required{color:var(--red)}input[type=text],input[type=date],select,textarea{width:100%;border:1px solid #adc9b8;border-radius:11px;padding:10px 11px;background:#fff;color:var(--ink)}textarea{min-height:82px;resize:vertical}input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid #ffca52;outline-offset:2px}
+    .tabs,.actions,.chips{display:flex;gap:8px;flex-wrap:wrap}.tab,.btn{border:0;border-radius:999px;padding:9px 14px;font-weight:800}.tab{background:#edf3ef;color:#315b48}.tab.active{background:var(--green);color:#fff}.btn{background:var(--green);color:#fff}.btn.secondary{background:#e6f0e9;color:#205b40}.btn.orange{background:var(--orange)}.btn.danger{background:#f9e3e1;color:#8e2d28}.btn:disabled{opacity:.5;cursor:not-allowed}
+    .checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.check{display:flex;align-items:center;gap:8px;background:#f3f8f5;border:1px solid #e1ece5;padding:9px;border-radius:11px}.check input{width:18px;height:18px;accent-color:var(--green)}
+    .entry{border-left:5px solid #55aa78;background:#f5faf7;padding:11px;margin:9px 0;border-radius:11px}.entry-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.entry small{display:block;color:var(--muted);margin-top:3px}.entry button{border:0;border-radius:8px;background:#f8dfdd;color:#8e2d28;padding:5px 9px}.empty{color:var(--muted);font-style:italic}
+    .scorebox{display:flex;align-items:center;gap:14px}.ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#27935f 0deg,#dce8df 0);position:relative;flex:0 0 auto}.ring:after{content:"";position:absolute;width:70px;height:70px;border-radius:50%;background:var(--card)}.ring b{z-index:1;font-size:1.35rem}.analysis{background:#fff7dd;border-left:5px solid #efb733;padding:11px;border-radius:10px;margin-top:11px}.days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.day{background:#edf5f0;border:1px solid #d7e7dd;border-radius:11px;padding:10px 4px;text-align:center}.day input{display:block;margin:0 auto 5px;width:18px;height:18px;accent-color:var(--green)}
+    .report{white-space:pre-wrap;background:#123d2d;color:#effff6;padding:15px;border-radius:13px;min-height:160px;max-height:430px;overflow:auto}.status{min-height:24px;margin-top:8px;font-weight:700;color:#9b421e}.footer{text-align:center;color:var(--muted);font-size:.82rem;padding:18px}.save-state{display:inline-flex;align-items:center;gap:6px;background:#e5f5ec;color:#176b49;border-radius:999px;padding:5px 10px;font-size:.82rem;font-weight:750;margin-top:10px}
+    @media(max-width:760px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.checks{grid-template-columns:1fr}.days{grid-template-columns:repeat(4,1fr)}}
+    @media print{body{background:#fff}.hero,.notice,.no-print,.footer{display:none!important}.wrap{max-width:none;padding:0}.grid{display:block}.card{box-shadow:none;margin:0 0 12px;break-inside:avoid}.report{color:#000;background:#fff;border:1px solid #bbb;max-height:none}}
+  </style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <header class="hero">
+    <h1>🍱 我的一日飲食偵探</h1>
+    <p>24小時飲食體檢｜記錄真實飲食、分析證據、重設一餐、實踐健康行動</p>
+    <div class="progress" aria-label="課業完成進度"><span id="progressBar"></span></div>
+    <div class="progress-text" id="progressText">完成進度：0%</div>
+    <div class="save-state" id="saveState">💾 本機自動儲存已啟用</div>
+  </header>
+
+  <div class="notice"><strong>私隱提醒：</strong>請使用「班別＋座號」代替全名，例如 3A-12。請勿輸入電話、地址、病歷等個人資料。本工具只在目前瀏覽器內儲存進度，不會自動傳送資料給老師。</div>
+
+  <main class="grid">
+    <section class="card">
+      <h2>🪪 偵探資料</h2>
+      <label for="student">班別及座號 <span class="required">*</span></label>
+      <input id="student" type="text" maxlength="20" placeholder="例如：3A-12" autocomplete="off">
+      <label for="recordDate">飲食記錄日期</label>
+      <input id="recordDate" type="date">
+    </section>
+
+    <section class="card">
+      <h2>📌 任務說明</h2>
+      <ol>
+        <li>如實記錄24小時內的飲食。</li>
+        <li>選出食物類別，檢視多樣性。</li>
+        <li>以證據判斷可能過多或不足的部分。</li>
+        <li>重設一餐，並訂立七天健康微行動。</li>
+      </ol>
+      <p class="hint">此工具只作學習用途，不提供醫療或個人營養診斷。</p>
+    </section>
+
+    <section class="card wide">
+      <h2>🔎 任務一：24小時飲食記錄</h2>
+      <div class="tabs" id="mealTabs" role="tablist" aria-label="選擇餐次"></div>
+      <label for="food">我吃了／喝了甚麼？ <span class="required">*</span></label>
+      <textarea id="food" maxlength="300" placeholder="例如：叉燒飯、菜心和清水。請記錄真實情況。"></textarea>
+      <div class="label">包含哪些食物類別？</div>
+      <div class="checks" id="foodGroups"></div>
+      <label for="feeling">進食後的感覺</label>
+      <select id="feeling">
+        <option value="">請選擇</option><option>仍然肚餓</option><option>剛剛好</option><option>太飽</option><option>精神充足</option><option>容易疲倦</option>
+      </select>
+      <div class="actions no-print" style="margin-top:12px">
+        <button class="btn" type="button" id="saveMeal">＋ 儲存這一餐</button>
+        <button class="btn secondary" type="button" id="clearMeal">清除輸入</button>
+      </div>
+      <div id="mealStatus" class="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <h2>📋 我的飲食記錄</h2>
+      <div id="entries" class="empty">尚未加入飲食記錄。</div>
+    </section>
+
+    <section class="card">
+      <h2>🩺 類別多樣性觀察</h2>
+      <div class="scorebox"><div class="ring" id="ring"><b id="score">0%</b></div><div><strong>已記錄的主要食物類別</strong><div class="hint">分數只反映記錄涵蓋的類別，不代表膳食份量恰當或健康診斷。</div></div></div>
+      <div class="analysis" id="analysis">加入飲食記錄後，偵探助手會整理觀察線索。</div>
+    </section>
+
+    <section class="card">
+      <h2>🧠 任務二：我的科學判斷</h2>
+      <label for="excess">哪些食物／營養可能較多？證據是甚麼？</label>
+      <textarea id="excess" maxlength="300" placeholder="例如：含糖飲品可能較多，因為……"></textarea>
+      <label for="lack">哪些食物／營養可能不足？證據是甚麼？</label>
+      <textarea id="lack" maxlength="300" placeholder="例如：蔬菜可能不足，因為……"></textarea>
+    </section>
+
+    <section class="card">
+      <h2>🔄 任務三：重設一餐</h2>
+      <label for="redesignMeal">選擇最值得改善的一餐</label>
+      <select id="redesignMeal"><option>早餐</option><option>午餐</option><option>晚餐</option><option>小食</option><option>飲品</option></select>
+      <label for="before">原來的餐膳</label><textarea id="before" maxlength="250" placeholder="可從已儲存記錄中選取"></textarea>
+      <label for="after">我的均衡新版</label><textarea id="after" maxlength="250" placeholder="加入、減少或替換哪些食物？"></textarea>
+      <label for="reason">科學解釋</label><textarea id="reason" maxlength="350" placeholder="使用「因為……所以……」解釋改動與健康的關係。"></textarea>
+    </section>
+
+    <section class="card wide">
+      <h2>🌱 任務四：七天健康微行動</h2>
+      <label for="action">選擇一項細小、具體、可實行的改變</label>
+      <select id="action"><option value="">請選擇</option><option>每天帶一份水果回校</option><option>午膳飲用清水，減少含糖飲品</option><option>每天至少有一餐包含蔬菜</option><option>上學前進食早餐</option><option>選擇較少油炸的食物</option></select>
+      <label for="customAction">或自訂健康微行動</label><input id="customAction" type="text" maxlength="120" placeholder="例如：本週有五個上學日以清水代替汽水">
+      <div class="label">七天行動打卡</div><div class="days" id="days"></div>
+      <label for="reflection">行動反思</label><textarea id="reflection" maxlength="350" placeholder="我做到了嗎？最大的困難是甚麼？下一步會怎樣做？"></textarea>
+    </section>
+
+    <section class="card wide">
+      <h2>📣 我的24小時飲食偵探報告</h2>
+      <div id="report" class="report">完成記錄與分析後，按「產生報告」。</div>
+      <div class="actions no-print" style="margin-top:12px">
+        <button class="btn orange" type="button" id="generate">產生／更新報告</button>
+        <button class="btn" type="button" id="copyReport">複製報告</button>
+        <button class="btn secondary" type="button" id="printReport">列印／儲存PDF</button>
+        <button class="btn secondary" type="button" id="downloadReport">下載文字報告</button>
+        <button class="btn danger" type="button" id="resetAll">清除所有資料</button>
+      </div>
+      <div id="reportStatus" class="status" aria-live="polite"></div>
+      <p class="hint">提交方式由老師決定，例如複製報告到電子學習平台、上載PDF，或提交畫面截圖。</p>
+    </section>
+  </main>
+  <footer class="footer">飲食偵探守則：如實記錄，以證據分析，再提出具體而可行的改善方法。</footer>
+</div>
+<script>
+(() => {
+  'use strict';
+  const KEY='dietDetectiveStudentV1';
+  const meals=['早餐','午餐','晚餐','小食','飲品'];
+  const groups=['穀物／碳水化合物','蔬菜','水果','肉魚蛋豆／蛋白質','奶類或替代品','油脂較多食物','含糖飲品／甜食','清水'];
+  const positive=['穀物／碳水化合物','蔬菜','水果','肉魚蛋豆／蛋白質','奶類或替代品','清水'];
+  let state={currentMeal:'早餐',entries:[],days:Array(7).fill(false)};
+  const $=id=>document.getElementById(id);
+  const fields=['student','recordDate','excess','lack','redesignMeal','before','after','reason','action','customAction','reflection'];
+
+  function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function load(){try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&typeof saved==='object')state={...state,...saved};}catch(e){} fields.forEach(id=>{if(state[id]!==undefined)$(id).value=state[id];}); if(!state.recordDate)$('recordDate').value=new Date().toISOString().slice(0,10);}
+  function collect(){fields.forEach(id=>state[id]=$(id).value);}
+  function persist(){collect();localStorage.setItem(KEY,JSON.stringify(state));$('saveState').textContent='✅ 已於 '+new Date().toLocaleTimeString('zh-HK',{hour:'2-digit',minute:'2-digit'})+' 儲存在此裝置';updateProgress();}
+  let saveTimer; function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(persist,250);}
+
+  function buildTabs(){const box=$('mealTabs');box.innerHTML='';meals.forEach(m=>{const b=document.createElement('button');b.type='button';b.className='tab'+(m===state.currentMeal?' active':'');b.textContent=m;b.onclick=()=>{state.currentMeal=m;buildTabs();persist();};box.appendChild(b);});}
+  function buildGroups(){const box=$('foodGroups');groups.forEach(g=>{const lab=document.createElement('label');lab.className='check';const input=document.createElement('input');input.type='checkbox';input.value=g;const span=document.createElement('span');span.textContent=g;lab.append(input,span);box.appendChild(lab);});}
+  function buildDays(){const box=$('days');box.innerHTML='';for(let i=0;i<7;i++){const lab=document.createElement('label');lab.className='day';const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!state.days[i];cb.onchange=()=>{state.days[i]=cb.checked;persist();};const span=document.createElement('span');span.textContent='第'+(i+1)+'天';lab.append(cb,span);box.appendChild(lab);}}
+  function clearMealForm(){ $('food').value='';$('feeling').value='';document.querySelectorAll('#foodGroups input').forEach(x=>x.checked=false);}
+  function saveMeal(){const food=$('food').value.trim();if(!food){$('mealStatus').textContent='請先輸入這一餐吃了或喝了甚麼。';$('food').focus();return;}const selected=[...document.querySelectorAll('#foodGroups input:checked')].map(x=>x.value);state.entries.push({id:Date.now(),meal:state.currentMeal,food,groups:selected,feeling:$('feeling').value});clearMealForm();$('mealStatus').textContent='已儲存「'+state.currentMeal+'」記錄。';renderEntries();persist();}
+  function removeEntry(id){state.entries=state.entries.filter(e=>e.id!==id);renderEntries();persist();}
+  function renderEntries(){const box=$('entries');box.innerHTML='';if(!state.entries.length){box.className='empty';box.textContent='尚未加入飲食記錄。';}else{box.className='';state.entries.forEach(e=>{const d=document.createElement('div');d.className='entry';d.innerHTML='<div class="entry-head"><strong>'+esc(e.meal)+'：'+esc(e.food)+'</strong><button type="button" aria-label="刪除此記錄">刪除</button></div><small>類別：'+esc(e.groups.join('、')||'未分類')+(e.feeling?'｜感覺：'+esc(e.feeling):'')+'</small>';d.querySelector('button').onclick=()=>removeEntry(e.id);box.appendChild(d);});}analyze();}
+  function analyze(){const found=new Set(state.entries.flatMap(e=>e.groups));const count=positive.filter(g=>found.has(g)).length;const score=Math.round(count/positive.length*100);$('score').textContent=score+'%';$('ring').style.background='conic-gradient(#27935f '+(score*3.6)+'deg,#dce8df 0)';let msg='加入飲食記錄後，偵探助手會整理觀察線索。';if(state.entries.length){const missing=positive.filter(g=>!found.has(g));msg=score>=80?'記錄涵蓋多種類別。請再檢視份量、烹調方法，以及糖、鹽和油的攝取。':score>=50?'記錄涵蓋部分主要類別，但仍有改善空間。':'目前記錄涵蓋的主要類別較少，請根據真實記錄找出可能不足之處。';if(missing.length)msg+=' 尚未在記錄中發現：'+missing.join('、')+'。';if(found.has('含糖飲品／甜食'))msg+=' 記錄包含含糖飲品或甜食，可思考進食頻率及替代選擇。';}$('analysis').textContent=msg;}
+  function updateBefore(){const e=[...state.entries].reverse().find(x=>x.meal===$('redesignMeal').value);if(e&&!$('before').value.trim())$('before').value=e.food;scheduleSave();}
+  function updateProgress(){let n=0;if(state.entries.length>=3)n++;if($('excess').value.trim()&&$('lack').value.trim())n++;if($('after').value.trim()&&$('reason').value.trim())n++;if(($('action').value||$('customAction').value.trim())&&state.days.some(Boolean))n++;const pct=n*25;$('progressBar').style.width=pct+'%';$('progressText').textContent='完成進度：'+pct+'%';}
+  function makeReport(){collect();if(!$('student').value.trim()){$('reportStatus').textContent='請先填寫班別及座號。';$('student').focus();return null;}const mealText=state.entries.length?state.entries.map(e=>'• '+e.meal+'：'+e.food+'\n  類別：'+(e.groups.join('、')||'未分類')+(e.feeling?'｜感覺：'+e.feeling:'')).join('\n'):'• 尚未記錄';const action=$('customAction').value.trim()||$('action').value||'尚未訂立';const days=state.days.filter(Boolean).length;const text='《我的24小時飲食偵探報告》\n班別及座號：'+$('student').value.trim()+'\n記錄日期：'+($('recordDate').value||'未填寫')+'\n\n【24小時飲食記錄】\n'+mealText+'\n\n【我的科學判斷】\n可能較多：'+($('excess').value.trim()||'尚未填寫')+'\n可能不足：'+($('lack').value.trim()||'尚未填寫')+'\n\n【重設一餐】\n選擇：'+$('redesignMeal').value+'\n原來：'+($('before').value.trim()||'尚未填寫')+'\n均衡新版：'+($('after').value.trim()||'尚未填寫')+'\n科學解釋：'+($('reason').value.trim()||'尚未填寫')+'\n\n【七天健康微行動】\n行動：'+action+'\n完成：'+days+'／7天\n反思：'+($('reflection').value.trim()||'尚未填寫')+'\n\n聲明：以上內容是我的真實生活記錄與學習分析，不屬於醫療診斷。';$('report').textContent=text;$('reportStatus').textContent='報告已更新。';state.report=text;persist();return text;}
+  async function copyReport(){const text=makeReport();if(!text)return;try{await navigator.clipboard.writeText(text);$('reportStatus').textContent='報告已複製，可貼到提交平台。';}catch(e){const r=document.createRange();r.selectNodeContents($('report'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('reportStatus').textContent='瀏覽器未能自動複製，報告文字已選取，請按 Ctrl+C。';}}
+  function downloadReport(){const text=makeReport();if(!text)return;const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='飲食偵探報告_'+$('student').value.trim().replace(/[^a-zA-Z0-9_-]/g,'_')+'.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+  function resetAll(){if(!confirm('確定清除這部裝置內的全部飲食記錄及報告嗎？此操作不能復原。'))return;localStorage.removeItem(KEY);state={currentMeal:'早餐',entries:[],days:Array(7).fill(false)};fields.forEach(id=>$(id).value='');$('recordDate').value=new Date().toISOString().slice(0,10);$('report').textContent='完成記錄與分析後，按「產生報告」。';$('reportStatus').textContent='';clearMealForm();buildTabs();buildDays();renderEntries();persist();}
+
+  load();buildTabs();buildGroups();buildDays();renderEntries();if(state.report)$('report').textContent=state.report;
+  $('saveMeal').onclick=saveMeal;$('clearMeal').onclick=clearMealForm;$('redesignMeal').onchange=updateBefore;$('generate').onclick=makeReport;$('copyReport').onclick=copyReport;$('printReport').onclick=()=>{makeReport();window.print();};$('downloadReport').onclick=downloadReport;$('resetAll').onclick=resetAll;
+  fields.forEach(id=>$(id).addEventListener('input',scheduleSave));window.addEventListener('beforeunload',persist);updateProgress();
+})();
+</script>
+</body>
+</html>
